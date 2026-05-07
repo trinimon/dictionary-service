@@ -1,0 +1,43 @@
+<entity-mappings xmlns="https://jakarta.ee/xml/ns/persistence/orm"
+                 version="3.0">
+    <named-native-query name="Translation.findByKeyword"
+                        result-class="de.trinimon.dictionary.translation.adapter.out.persistence.TranslationEntity">
+        <query>
+            SELECT *, CASE
+                        WHEN (translate(lower(source), '.,;:-', '     ') || ' ') LIKE (        :keyword || ' %') THEN 5
+                        WHEN (translate(lower(source), '.,;:-', '     ') || ' ') LIKE (        :keyword ||  '%') THEN 4
+                        WHEN (translate(lower(source), '.,;:-', '     ') || ' ') LIKE ('% ' || :keyword || ' %') THEN 3
+                        WHEN (translate(lower(source), '.,;:-', '     ') || ' ') LIKE ( '%' || :keyword || ' %') THEN 2
+                        ELSE 1
+                      END AS score
+              FROM common.translation
+             WHERE length(:keyword) >= 3
+               AND source_language = :sourceLanguage
+               AND target_language = :targetLanguage
+               AND lower(source) LIKE '%' || :keyword || '%'
+             ORDER BY score DESC, source ASC
+        </query>
+    </named-native-query>
+    <named-native-query name="Translation.findByKeyword.count" result-set-mapping="CountMapping">
+        <query>
+            SELECT count(*) as total
+              FROM common.translation t
+             WHERE length(:keyword) >= 3
+               AND source_language = :sourceLanguage
+               AND target_language = :targetLanguage
+               AND lower(source) LIKE '%' || :keyword || '%'
+        </query>
+    </named-native-query>
+    <named-native-query name="Translation.wordOfTheDay"
+                        result-class="de.trinimon.dictionary.translation.adapter.out.persistence.TranslationEntity">
+        <query>
+            SELECT *
+              FROM common.translation
+             WHERE source_language = :language
+             ORDER BY RANDOM() LIMIT 1
+        </query>
+    </named-native-query>
+    <sql-result-set-mapping name="CountMapping">
+        <column-result name="total" class="java.lang.Long"/>
+    </sql-result-set-mapping>
+</entity-mappings>

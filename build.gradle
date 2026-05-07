@@ -1,0 +1,112 @@
+plugins {
+    id 'java'
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.dependency.management)
+    id 'jacoco'
+}
+
+group = 'de.trinimon'
+version = '0.0.1-SNAPSHOT'
+description = 'Dictionary Service'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+}
+
+jacoco {
+    toolVersion = libs.versions.jacoco.get()
+}
+jacocoTestReport {
+    dependsOn(tasks.named('test'))
+
+    reports {
+        xml.required = true // für CI/CD Tools wie SonarQube
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+}
+jacocoTestCoverageVerification {
+    dependsOn(tasks.named('test'))
+
+    violationRules {
+        rule {
+            element = 'CLASS'
+
+            excludes = [
+                    // Spring Boot Bootstrap
+                    'de.trinimon.dictionary.DictionaryApplication',
+
+                    // MapStruct generated implementations
+                    'de.trinimon.dictionary.translation.adapter.in.web.mapper.PagingResourceMapperImpl',
+                    'de.trinimon.dictionary.translation.adapter.in.web.mapper.TranslationResourceMapperImpl',
+                    'de.trinimon.dictionary.translation.adapter.out.persistence.TranslationMapperImpl'
+            ]
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 1.00
+            }
+        }
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    mockitoAgent
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation libs.spring.boot.starter.data.jpa
+    implementation libs.spring.boot.starter.webmvc
+    implementation libs.springdoc.openapi.starter.webmvc.ui
+    implementation libs.spring.boot.starter.cache
+    implementation libs.flyway.core
+    implementation libs.mapstruct
+
+    compileOnly libs.lombok
+    runtimeOnly libs.postgresql
+
+    annotationProcessor libs.lombok
+    annotationProcessor libs.mapstruct.processor
+
+    testImplementation libs.spring.boot.starter.test
+    testImplementation libs.spring.boot.starter.data.jpa.test
+    testImplementation libs.spring.boot.starter.webmvc.test
+    testImplementation libs.spring.boot.test.autoconfigure
+    testImplementation libs.instancio.junit
+
+    testAnnotationProcessor libs.lombok
+    testAnnotationProcessor libs.mapstruct.processor
+
+    testCompileOnly libs.lombok
+    testRuntimeOnly libs.h2
+
+    mockitoAgent(libs.mockito.core) {
+        transitive = false
+    }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    jvmArgs += "-javaagent:${configurations.mockitoAgent.asPath}"
+}
+
+tasks.register('docker', Exec) {
+    group = 'docker'
+    description = 'Builds the Docker image'
+    dependsOn(tasks.named('bootJar'))
+    commandLine "docker", "build", "-t", "trinimon/dictionaries-service:local", "."
+}
