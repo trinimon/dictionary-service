@@ -30,7 +30,6 @@ public class TranslationStoreAdapter implements TranslationStore {
                         keyword, PageRequest.of(paging.page(), paging.size()));
 
         return new PageResult<>(
-                // page.getContent().stream().map(mapper::mapFromEntity).toList(),
                 page.stream().map(mapper::mapFromEntity).toList(),
                 page.getNumber(),
                 page.getSize(),
