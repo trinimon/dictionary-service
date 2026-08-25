@@ -27,8 +27,8 @@ OAUTH2_AUDIENCE=<audience>
 CORS can be configured for instance by:
 
 ```env
-de.trinimon.cors.enabled=true
-de.trinimon.cors.allowed-origins=http://<hostname>:<port>,http://<ip>:<port>
+CORS_ENABLED=true
+CORS_ALLOWED_ORIGINS=http://<hostname>:<port>,http://<ip>:<port>
 ```
 
 # Running with Docker
