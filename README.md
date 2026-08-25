@@ -16,7 +16,24 @@ SPRING_DATASOURCE_USERNAME=<translator username>
 SPRING_DATASOURCE_PASSWORD=<translator password>
 ```
 
+In order to enable security add: 
+
+```env
+SECURITY_ENABLED=true
+KEYCLOAK_ISSUER_URI=<scheme>://<host>:<port>/realms/<realm>
+OAUTH2_AUDIENCE=<audience>
+```
+
+CORS can be configured for instance by:
+
+```env
+de.trinimon.cors.enabled=true
+de.trinimon.cors.allowed-origins=http://<hostname>:<port>,http://<ip>:<port>
+```
+
 # Running with Docker
+
+Running in Docker with security and CORS disabled. 
 
 ```bash
 docker run -p 8080:8080 \

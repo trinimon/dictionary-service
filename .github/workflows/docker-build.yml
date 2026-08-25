@@ -45,5 +45,5 @@ jobs:
         context: .
         push: true
         tags: |
-          trinimon/dictionary-service:1.0
+          trinimon/dictionary-service:2.0
           trinimon/dictionary-service:latest

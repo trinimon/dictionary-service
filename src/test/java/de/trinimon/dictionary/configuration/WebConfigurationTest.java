@@ -10,16 +10,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TranslationController.class)
 @Import(WebConfiguration.class)
+@TestPropertySource(properties = {
+        "de.trinimon.security.enabled=true",
+        "de.trinimon.cors.enabled=true",
+        "de.trinimon.cors.allowed-origins=http://localhost:3000"
+})
 class WebConfigurationTest {
 
     @Autowired
@@ -38,11 +43,22 @@ class WebConfigurationTest {
     void testEnumConverterRegistration() throws Exception {
         // When
         when(translateUseCase.wordOfTheDay(Language.ENGLISH)).thenReturn(null);
-        when(translationResourceMapper.mapFromModel(null)).thenReturn( null);
+        when(translationResourceMapper.mapFromModel(null)).thenReturn(null);
 
-        mockMvc.perform(get("/api/translations/word-of-the-day?language=en"))
+        mockMvc.perform(get("/api/translations/word-of-the-day?language=en")
+                        .header("Origin", "http://localhost:3000"))
                 .andExpect(status().isOk());
         // Then
         verify(translateUseCase).wordOfTheDay(Language.ENGLISH);
+    }
+
+    @Test
+    void testCorsFailure() throws Exception {
+        // When
+        mockMvc.perform(get("/api/translations/word-of-the-day?language=en")
+                        .header("Origin", "http://localhost:5000"))
+                .andExpect(status().isForbidden());
+        // Then
+        verifyNoInteractions(translateUseCase);
     }
 }

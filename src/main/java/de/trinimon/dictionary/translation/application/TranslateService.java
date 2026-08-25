@@ -10,9 +10,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.Locale;
 
-import static de.trinimon.dictionary.translation.domain.service.TranslationPolicy.assertTranslationAllowed;
-import static de.trinimon.dictionary.translation.domain.service.TranslationPolicy.assertValidKeyword;
-import static de.trinimon.dictionary.translation.domain.service.TranslationPolicy.assertValidPaging;
+import static de.trinimon.dictionary.translation.domain.service.TranslationPolicy.*;
 
 @AllArgsConstructor
 public class TranslateService implements TranslateUseCase {

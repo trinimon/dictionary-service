@@ -14,17 +14,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ActiveProfiles("it")
 class DictionaryApplicationTests {
 
-	@MockitoBean
-	private JwtDecoder jwtDecoder;
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
-	@Test
-	void constructorIsPrivate() throws NoSuchMethodException {
-		Constructor<DictionaryApplication> constructor = DictionaryApplication.class.getDeclaredConstructor();
-		assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
-	}
+    @Test
+    void constructorIsPrivate() throws NoSuchMethodException {
+        Constructor<DictionaryApplication> constructor = DictionaryApplication.class.getDeclaredConstructor();
+        assertTrue(java.lang.reflect.Modifier.isPrivate(constructor.getModifiers()));
+    }
 
 }

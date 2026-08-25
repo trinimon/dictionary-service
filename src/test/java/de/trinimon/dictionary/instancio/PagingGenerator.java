@@ -7,6 +7,6 @@ import org.instancio.generator.Generator;
 public class PagingGenerator implements Generator<Paging> {
 
     public Paging generate(Random random) {
-        return new Paging(0,10);
+        return new Paging(0, 10);
     }
 }
