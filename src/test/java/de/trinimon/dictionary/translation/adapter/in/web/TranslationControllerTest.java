@@ -28,7 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TranslationController.class)
-@Import(TranslationControllerTest.BeanTestConfiguration.class)
+@Import({
+        TranslationControllerTest.BeanTestConfiguration.class
+})
 class TranslationControllerTest {
 
     @Autowired
@@ -45,7 +47,7 @@ class TranslationControllerTest {
         when(translateUseCase.translate(GERMAN, ENGLISH, "tier", paging))
                 .thenReturn(new PageResult<>(List.of(translation), 0, 10, 1));
 
-        mockMvc.perform(get("/translations")
+        mockMvc.perform(get("/api/translations")
                         .param("keyword", "t\\i%e_r") // check sanitation!
                         .param("sourceLanguage", "de")
                         .param("targetLanguage", "en")
@@ -66,8 +68,8 @@ class TranslationControllerTest {
 
         when(translateUseCase.wordOfTheDay(Language.SPANISH)).thenReturn(translation);
 
-        mockMvc.perform(get("/translations/word-of-the-day")
-                        .param("language","es"))
+        mockMvc.perform(get("/api/translations/word-of-the-day")
+                        .param("language", "es"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.source").value("Wort"))
                 .andExpect(jsonPath("$.target").value("word"));

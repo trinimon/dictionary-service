@@ -75,6 +75,9 @@ dependencies {
     implementation libs.spring.boot.starter.cache
     implementation libs.flyway.core
     implementation libs.mapstruct
+    implementation libs.spring.boot.starter.actuator
+    implementation libs.spring.boot.starter.security
+    implementation libs.spring.boot.starter.oauth2.resource.server
 
     compileOnly libs.lombok
     runtimeOnly libs.postgresql
@@ -87,6 +90,7 @@ dependencies {
     testImplementation libs.spring.boot.starter.webmvc.test
     testImplementation libs.spring.boot.test.autoconfigure
     testImplementation libs.instancio.junit
+    testImplementation libs.spring.security.test
 
     testAnnotationProcessor libs.lombok
     testAnnotationProcessor libs.mapstruct.processor
