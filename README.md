@@ -16,10 +16,9 @@ SPRING_DATASOURCE_USERNAME=<translator username>
 SPRING_DATASOURCE_PASSWORD=<translator password>
 ```
 
-In order to enable security add: 
+In order to enable security use the profile `secured` and add: 
 
 ```env
-SECURITY_ENABLED=true
 KEYCLOAK_ISSUER_URI=<scheme>://<host>:<port>/realms/<realm>
 OAUTH2_AUDIENCE=<audience>
 ```

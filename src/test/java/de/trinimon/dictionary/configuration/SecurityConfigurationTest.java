@@ -13,7 +13,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,14 +21,17 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TranslationController.class)
+@WebMvcTest(
+        controllers = TranslationController.class,
+        properties = {
+                "spring.security.oauth2.resourceserver.jwt.issuer-uri=http://example/issuer",
+                "spring.security.oauth2.resourceserver.jwt.audiences=test-audience"
+        })
 @Import({
         SecurityConfiguration.class,
         SecurityConfigurationTest.BeanTestConfiguration.class
 })
-@TestPropertySource(properties = {
-        "de.trinimon.security.enabled=true"
-})
+@ActiveProfiles("secured")
 class SecurityConfigurationTest {
 
     @Autowired
